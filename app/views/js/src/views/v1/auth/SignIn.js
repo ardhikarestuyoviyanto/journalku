@@ -36,6 +36,7 @@ const SignIn = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const unauthorized = location.state?.unauthorized
+  const logoutSuccess = location.state?.logoutSuccess
 
   const formik = useFormik({
     initialValues: {
@@ -93,6 +94,13 @@ const SignIn = () => {
 
     if (unauthorized) {
       toast.error(t('unAuthorized'))
+      history.replace({ ...location, state: { ...location.state, unAuthorized: undefined } })
+    }
+
+    if (logoutSuccess) {
+      console.log(logoutSuccess)
+      toast.success(t('logoutSuccess'))
+      history.replace({ ...location, state: { ...location.state, logoutSuccess: undefined } })
     }
 
     const handleMessage = (event) => {

@@ -57,5 +57,12 @@
   "owner": "OWNER",
   "serverError": "Internal Server Error",
   "forhibiden": "Anda tidak punya akses",
-  "loading": "Loading ..."
+  "loading": "Loading ...",
+  "cost": "Biaya",
+  "buy": "Beli",
+  "sell": "Jual",
+  "dashboard": "Beranda",
+  "logout": "Keluar",
+  "logoutSuccess": "Anda Berhasil Logout",
+  "switchingCompanySuccess": "Pindah Perusahaan Berhasil"
 }

@@ -123,7 +123,7 @@ func Store(db *gorm.DB)echo.HandlerFunc{
 
 func GetAll(db *gorm.DB)echo.HandlerFunc{
 	return func(c echo.Context) error {
-		user := c.Get("user").(map[string]interface{})
+		user := c.Get("user") .(map[string]interface{})
 		userId, _ := uuid.Parse(user["id"].(string))
 
 		company, err := companyEntity.GetByUserId(db, userId)
@@ -134,7 +134,7 @@ func GetAll(db *gorm.DB)echo.HandlerFunc{
 			})
 		}
 
-		companyList := []response.ResCompanyAccess{}
+		companyAccess := []response.ResCompanyAccess{}
 		for _, comp := range company{
 			id, _ := uuid.Parse(comp["id"].(string))
 
@@ -142,7 +142,7 @@ func GetAll(db *gorm.DB)echo.HandlerFunc{
 			if val, ok := comp["photo"].(string); ok {
 				photo = &val
 			}
-			companyList = append(companyList, response.ResCompanyAccess{
+			companyAccess = append(companyAccess, response.ResCompanyAccess{
 				ID: id,
 				Name: comp["name"].(string),
 				Photo: photo,
@@ -153,7 +153,7 @@ func GetAll(db *gorm.DB)echo.HandlerFunc{
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"data": companyList,
+			"data": companyAccess,
 			"success": true,
 		})
 	}
@@ -239,7 +239,7 @@ func ChooseCompany(db *gorm.DB)echo.HandlerFunc{
 				ID: userId,
 				Name: user["name"].(string),
 				Email: user["email"].(string),
-				CurrentCompany: currentCompany,
+				CurrentCompany: &currentCompany,
 			},
 			Exp: exp,
 

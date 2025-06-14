@@ -4,7 +4,8 @@ import (
 	"fullstack-journal/app/filters"
 	"fullstack-journal/app/handler/v1/auth/signInHandler"
 	"fullstack-journal/app/handler/v1/auth/signUpHandler"
-	"fullstack-journal/app/handler/v1/companyHandler"
+	"fullstack-journal/app/handler/v1/company/companyHandler"
+	"fullstack-journal/app/handler/v1/metaData/initHandler"
 	"fullstack-journal/app/handler/v1/metaData/locationHandler"
 
 	"github.com/labstack/echo/v4"
@@ -37,5 +38,6 @@ func ApiV1(e *echo.Echo, db *gorm.DB) {
 	routeAuth.GET("/company", companyHandler.GetAll(db))
 	// MODUL CHOOSE COMPANY
 	routeAuth.POST("/choose-company", companyHandler.ChooseCompany(db))
-	
+	// MODUL INIT API
+	routeAuth.GET("/init", initHandler.GetAll(db))
 }

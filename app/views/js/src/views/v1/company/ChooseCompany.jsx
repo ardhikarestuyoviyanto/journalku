@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import {
   CAvatar,
@@ -10,7 +10,6 @@ import {
   CContainer,
   CListGroup,
   CListGroupItem,
-  CPlaceholder,
   CRow,
   CSpinner,
 } from '@coreui/react'
@@ -24,10 +23,10 @@ import history from '../../../history'
 const defaultPhoto = `${import.meta.env.VITE_API_DOMAIN}/storage/image/empty_image.jpg`
 
 const ChooseCompany = () => {
-  const auth = useSelector((state) => state.auth)
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useDispatch()
   const message = location.state?.message
 
   const [company, setCompany] = useState([])
@@ -55,8 +54,11 @@ const ChooseCompany = () => {
 
     setLoading(false)
     if (response.success) {
-      alert('Sukses')
-      console.log(response)
+      dispatch({
+        type: 'set',
+        auth: response.data,
+      })
+      navigate('/dashboard')
     } else {
       toast.error(response.error)
     }
@@ -117,7 +119,7 @@ const ChooseCompany = () => {
                   ) : (
                     <>
                       {loading ? (
-                        <div className="d-flex align-items-center mt-5">
+                        <div className="d-flex align-items-center mt-3">
                           <strong role="status">{t('Loading')}</strong>
                           <CSpinner className="ms-auto" color="primary" />
                         </div>
@@ -131,8 +133,7 @@ const ChooseCompany = () => {
                                 handleChooseCompany(comp.id)
                               }}
                               key={index}
-                              className="border-0 shadow-sm rounded-4 mb-2 p-3 list-group-hover"
-                              style={{ transition: '0.2s', background: 'blur' }}
+                              className="border-1 shadow-sm rounded-4 mb-2 p-3"
                             >
                               <CRow>
                                 <CCol
@@ -151,12 +152,12 @@ const ChooseCompany = () => {
                                 </CCol>
                                 <CCol sm={10}>
                                   <div className="d-flex align-items-center justify-content-between">
-                                    <h5 className="mb-0 text-dark fw-semibold">{comp.name}</h5>
+                                    <h5 className="mb-0">{comp.name}</h5>
                                     <CBadge color="danger" className="ms-2">
                                       <i className="fa fa-user-shield me-1"></i> {comp.role}
                                     </CBadge>
                                   </div>
-                                  <small className="text-muted">{comp.address}</small>
+                                  <small className="text-muted">{comp.address}1</small>
                                 </CCol>
                               </CRow>
                             </CListGroupItem>

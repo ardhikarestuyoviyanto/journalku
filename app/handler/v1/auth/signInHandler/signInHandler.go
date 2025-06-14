@@ -60,7 +60,7 @@ func SignIn(db *gorm.DB)echo.HandlerFunc{
 			ID: users.ID,
 			Name: users.Name,
 			Email: users.Email,
-			CurrentCompany: response.ResCurrentCompany{},
+			CurrentCompany: nil,
 		}
 
 		resToken := response.ResToken{
@@ -192,7 +192,7 @@ func SignGoogleCallback(db *gorm.DB)echo.HandlerFunc{
 			ID: users.ID,
 			Name: users.Name,
 			Email: users.Email,
-			CurrentCompany: response.ResCurrentCompany{},
+			CurrentCompany: nil,
 		}
 
 		resToken := response.ResToken{

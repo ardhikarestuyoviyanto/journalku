@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   CContainer,
@@ -13,33 +12,89 @@ import {
   CNavLink,
   CNavItem,
   useColorModes,
+  CBreadcrumb,
+  CBreadcrumbItem,
+  CInputGroup,
+  CButton,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import {
-  cilBell,
-  cilContrast,
-  cilEnvelopeOpen,
-  cilList,
-  cilMenu,
-  cilMoon,
-  cilSun,
-} from '@coreui/icons'
-
-import { AppBreadcrumb } from './index'
+import { cilContrast, cilMenu, cilMoon, cilSun, cilGlobeAlt, cilPlaylistAdd } from '@coreui/icons'
+import store from '../store'
 import { AppHeaderDropdown } from './header/index'
+import { useTranslation } from 'react-i18next'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingBasket, faShoppingBag, faCreditCard } from '@fortawesome/free-solid-svg-icons'
+import fetchWithAuth from '../helpers/fetch'
+import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
-const AppHeader = () => {
+const navButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '6px 12px',
+  border: '1px solid #ddd',
+  borderRadius: '8px',
+  color: '#4a4a4a',
+  fontWeight: '500',
+  backgroundColor: 'white',
+  transition: 'all 0.2s ease-in-out',
+  textDecoration: 'none',
+}
+
+const iconStyle = {
+  color: '#6c63ff',
+}
+
+const AppHeader = ({ breadCrumbs }) => {
   const headerRef = useRef()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
-
+  const { t, i18n } = useTranslation()
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const state = store.getState()
+  const auth = state.auth
+  const [loading, setLoading] = useState(false)
+  const [dataInit, setDataInit] = useState(null)
+
+  const handleGetInit = async () => {
+    const data = await fetchWithAuth(`${import.meta.env.VITE_API_BASE_URL}/init`, {
+      method: 'GET',
+    })
+    if (data && data.success) {
+      setDataInit(data.data)
+    } else {
+      toast.error(data.error)
+    }
+  }
+
+  const handleChooseCompany = async (companyId) => {
+    const formData = new FormData()
+    formData.append('companyId', companyId)
+    setLoading(true)
+    const response = await fetchWithAuth(`${import.meta.env.VITE_API_BASE_URL}/choose-company`, {
+      method: 'POST',
+      body: formData,
+    })
+    setLoading(false)
+    if (response.success) {
+      dispatch({
+        type: 'set',
+        auth: response.data,
+      })
+      toast.success(t('switchingCompanySuccess'))
+    } else {
+      toast.error(data.error)
+    }
+  }
 
   useEffect(() => {
     document.addEventListener('scroll', () => {
       headerRef.current &&
         headerRef.current.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0)
     })
+    // Get Init Data
+    handleGetInit()
   }, [])
 
   return (
@@ -51,41 +106,78 @@ const AppHeader = () => {
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex">
+        <CHeaderNav className="d-none d-md-flex" style={{ gap: '8px' }}>
           <CNavItem>
-            <CNavLink to="/dashboard" as={NavLink}>
-              Dashboard
+            <CNavLink href="#" style={navButtonStyle}>
+              <FontAwesomeIcon icon={faShoppingBasket} style={iconStyle} />
+              {t('sell')}
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>
-        </CHeaderNav>
-        <CHeaderNav className="ms-auto">
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilBell} size="lg" />
+            <CNavLink href="#" style={navButtonStyle}>
+              <FontAwesomeIcon icon={faShoppingBag} style={iconStyle} />
+              {t('buy')}
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilList} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilEnvelopeOpen} size="lg" />
+            <CNavLink href="#" style={navButtonStyle}>
+              <FontAwesomeIcon icon={faCreditCard} style={iconStyle} />
+              {t('cost')}
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav>
+        <CHeaderNav className="ms-auto align-items-center">
+          {/* Nama Perusahaan */}
+          <div className="px-3">
+            {dataInit != null && (
+              <CInputGroup>
+                <select
+                  disabled={loading}
+                  onChange={(e) => {
+                    handleChooseCompany(e.target.value)
+                  }}
+                  className="form-control"
+                  defaultValue={auth?.user?.currentCompany?.id}
+                >
+                  {dataInit?.companyAccess?.map((comp, index) => (
+                    <option key={index} value={comp.id}>
+                      {comp.name}
+                    </option>
+                  ))}
+                </select>
+                <Link to={'/choose-company/create'}>
+                  <CButton type="button" color="secondary" variant="outline" id="button-addon2">
+                    <CIcon icon={cilPlaylistAdd} size="lg" />
+                  </CButton>
+                </Link>
+              </CInputGroup>
+            )}
+          </div>
+
+          {/* Garis Vertikal */}
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
-          <CDropdown variant="nav-item" placement="bottom-end">
+
+          {/* Dropdown Bahasa */}
+          <CDropdown variant="nav-item" className="px-2">
+            <CDropdownToggle caret={false} className="d-flex align-items-center gap-2">
+              <span>ID</span>
+              <CIcon icon={cilGlobeAlt} size="lg" />
+            </CDropdownToggle>
+            <CDropdownMenu>
+              <CDropdownItem>English</CDropdownItem>
+              <CDropdownItem>Bahasa Indonesia</CDropdownItem>
+            </CDropdownMenu>
+          </CDropdown>
+
+          {/* Garis Vertikal */}
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
+
+          {/* Dropdown Mode Warna */}
+          <CDropdown variant="nav-item" placement="bottom-end" className="px-1">
             <CDropdownToggle caret={false}>
               {colorMode === 'dark' ? (
                 <CIcon icon={cilMoon} size="lg" />
@@ -125,14 +217,28 @@ const AppHeader = () => {
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>
+
+          {/* Garis Vertikal */}
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
+
+          {/* User Dropdown */}
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>
       <CContainer className="px-4" fluid>
-        <AppBreadcrumb />
+        <CBreadcrumb className="my-0">
+          {breadCrumbs.map((bread, index) => (
+            <CBreadcrumbItem
+              key={index}
+              active={bread.isActive}
+              {...(!bread.isActive ? { href: bread.url } : {})}
+            >
+              {bread.name}
+            </CBreadcrumbItem>
+          ))}
+        </CBreadcrumb>
       </CContainer>
     </CHeader>
   )

@@ -11,7 +11,7 @@ type ResUserToken struct {
 	ID             uuid.UUID         `json:"id"`
 	Name           string            `json:"name"`
 	Email          string            `json:"email"`
-	CurrentCompany ResCurrentCompany `json:"currentCompany"`
+	CurrentCompany *ResCurrentCompany `json:"currentCompany"`
 }
 
 type ResCurrentCompany struct {
@@ -43,4 +43,8 @@ type ResCompanyAccess struct{
 	IsOwner    int64     `json:"isOwner"`
 	Address    string    `json:"address"`
 	Role       string    `json:"role"`
+}
+
+type ResInit struct{
+	CompanyAccess []ResCompanyAccess `json:"companyAccess"`
 }

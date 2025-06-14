@@ -5,7 +5,8 @@ import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
 import './scss/examples.scss'
 import { ToastContainer } from 'react-toastify'
-import PrivateRoute from './PrivateRoute'
+import PrivateRouteAuth from './PrivateRouteAuth'
+import PrivateRouteCurrentCompany from './PrivateRouteCurrentCompany'
 
 // Pages
 const SignIn = React.lazy(() => import('./views/v1/auth/SignIn'))
@@ -14,6 +15,7 @@ const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const ChooseCompany = React.lazy(() => import('./views/v1/company/ChooseCompany'))
 const CreateCompany = React.lazy(() => import('./views/v1/company/CreateCompany'))
+const Dashboard = React.lazy(() => import('./views/v1/dashboard/Dashboard'))
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -51,17 +53,25 @@ const App = () => {
         <Route
           path="/choose-company"
           element={
-            <PrivateRoute>
+            <PrivateRouteAuth>
               <ChooseCompany />
-            </PrivateRoute>
+            </PrivateRouteAuth>
           }
         />
         <Route
           path="/choose-company/create"
           element={
-            <PrivateRoute>
+            <PrivateRouteAuth>
               <CreateCompany />
-            </PrivateRoute>
+            </PrivateRouteAuth>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRouteCurrentCompany>
+              <Dashboard />
+            </PrivateRouteCurrentCompany>
           }
         />
       </Routes>
