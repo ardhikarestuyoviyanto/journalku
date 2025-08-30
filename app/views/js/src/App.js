@@ -7,6 +7,7 @@ import './scss/examples.scss'
 import { ToastContainer } from 'react-toastify'
 import PrivateRouteAuth from './PrivateRouteAuth'
 import PrivateRouteCurrentCompany from './PrivateRouteCurrentCompany'
+import Accounts from './views/v1/setting/Accounts'
 
 // Pages
 const SignIn = React.lazy(() => import('./views/v1/auth/SignIn'))
@@ -71,6 +72,15 @@ const App = () => {
           element={
             <PrivateRouteCurrentCompany>
               <Dashboard />
+            </PrivateRouteCurrentCompany>
+          }
+        />
+        {/* Modul Settings */}
+        <Route
+          path="/setting/accounts"
+          element={
+            <PrivateRouteCurrentCompany>
+              <Accounts />
             </PrivateRouteCurrentCompany>
           }
         />

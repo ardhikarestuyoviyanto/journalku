@@ -9,7 +9,7 @@ const Dashboard = () => {
 
   const breadCrumbs = [
     {
-      name: 'Dashboard',
+      name: t('dashboard'),
       url: '/dashboard',
       isActive: true,
     },

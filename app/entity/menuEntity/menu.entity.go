@@ -2,7 +2,6 @@ package menuEntity
 
 import (
 	"errors"
-	"fmt"
 	"fullstack-journal/app/entity"
 	"fullstack-journal/app/response"
 	"log"
@@ -95,21 +94,17 @@ func GetMenuByRoleId(db *gorm.DB, roleId uuid.UUID) ([]response.ResMenu, error) 
 
 func findFirstPermissionView(db *gorm.DB, roleId uuid.UUID, menuId int64)(map[string]interface{}, error){
 	result := map[string]interface{}{}
-	query := `
-		SELECT 	
-			role_has_permission.*,
-			permission.menu_id
-		FROM role_has_permission
-		LEFT JOIN permission ON permission.id = role_has_permission.permission_id
-		WHERE role_has_permission.role_id = ?
-		AND permission.menu_id = ?
-		AND permission.permission_view = 1
-		AND role_has_permission.deleted_at IS NULL
-		LIMIT 1
-	`;
+	query := db.Table("role_has_permission").
+		Select("role_has_permission.*,permission.menu_id").
+		Joins("LEFT JOIN permission ON permission.id = role_has_permission.permission_id").
+		Where("role_has_permission.role_id = ?", roleId).
+		Where("permission.menu_id = ?", menuId).
+		Where("permission.permission_view = ?", 1).
+		Where("role_has_permission.deleted_at IS NULL").
+		Limit(1)
 
-	if err := db.Raw(query, roleId, menuId).Scan(&result).Error; err != nil{
-		fmt.Println("Query error:", err)
+	if err := query.Scan(&result).Error; err != nil{
+		log.Println("Query error:", err)
 		return result, errors.New(err.Error())
 	}
 

@@ -186,3 +186,21 @@ func UploadFile(dstDir string, file *multipart.FileHeader)(string, error){
 
 	return randomFileName, nil
 }
+
+func BuildSet(arr []string) map[string]bool{
+	set := make(map[string]bool)
+	for _, v := range arr {
+		set[v] = true
+	}
+
+	return set
+}
+
+func Contains(arr []int, target int) bool {
+    for _, v := range arr {
+        if v == target {
+            return true
+        }
+    }
+    return false
+}

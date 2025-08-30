@@ -160,3 +160,35 @@ type RoleHasPermission struct{
 func (RoleHasPermission) TableName()string{
 	return "role_has_permission"
 }
+
+type MetaData struct{
+	ID 				int64		   `gorm:"type:int;primaryKey;autoIncrement"`
+	Key 			string
+	Value 			string
+	Description		*string		   `gorm:"default:null"`
+	CreatedAt    	time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt    	time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt    	gorm.DeletedAt `gorm:"index"`	
+}
+
+func (MetaData) TableName()string{
+	return "metadata"
+}
+
+type Account struct{
+	ID					uuid.UUID		`gorm:"type:uuid;primaryKey"`
+	CompanyId 			uuid.UUID		`gorm:"type:uuid"`
+	CategoryAccountId 	int64
+	NumberAccount		string
+	Name				string
+	Description			*string		   	`gorm:"default:null"`
+	IsPrimary			int64		
+	IsArchive 			int64
+	CreatedAt    		time.Time      	`gorm:"autoCreateTime"`
+	UpdatedAt    		time.Time      	`gorm:"autoUpdateTime"`
+	DeletedAt    		gorm.DeletedAt 	`gorm:"index"`
+}
+
+func (Account) TableName()string{
+	return "account"
+}

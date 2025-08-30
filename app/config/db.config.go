@@ -30,6 +30,9 @@ func InitDB() (*gorm.DB, error){
 	// seed.IndonesiaLocationSeed(db)
 	// seed.MenuSeed(db)
 
+	// companyId, _ := uuid.Parse("171f3dd4-00b5-42d5-a40f-ecc89cf0bf62")
+	// seed.AccountSeed(db, companyId)
+
 	return db, nil
 
 }
@@ -46,5 +49,7 @@ func startMigration(db *gorm.DB){
 		entity.Role{},
 		entity.Permission{},
 		entity.RoleHasPermission{},
+		entity.MetaData{},
+		entity.Account{},
 	)
 }

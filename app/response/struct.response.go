@@ -48,3 +48,19 @@ type ResCompanyAccess struct{
 type ResInit struct{
 	CompanyAccess []ResCompanyAccess `json:"companyAccess"`
 }
+
+type ResAccount struct {
+	ID uuid.UUID `json:"id"`
+	CategoryAccount string `json:"category_account"`
+	NumberAccount string `json:"number_account"`
+	Name string `json:"name"`
+	Description string `json:"description"`
+	IsPrimary int64 `json:"is_primary"`
+	IsArchive int64 `json:"is_archive"`
+}
+
+type ResCategoryAccount struct{
+	ID int64 `json:"id"`
+	Value string `json:"code"` // Supaya mudah di fe
+	Description string `json:"category"` // Supaya mudah di fe
+}

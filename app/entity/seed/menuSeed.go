@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type MenuJson struct {
+type menuJson struct {
 	ID         int64           	`json:"id"`
 	ParentId   int64           	`json:"parentId"`
 	NameId     string          	`json:"nameId"`
@@ -17,11 +17,11 @@ type MenuJson struct {
 	Icon       *string         	`json:"icon"` 
 	URL        string          	`json:"url"`
 	Order      int64           	`json:"order"`
-	Permission []PermissionJson `json:"permission"`
-	Child      []MenuJson      	`json:"child"`
+	Permission []permissionJson `json:"permission"`
+	Child      []menuJson      	`json:"child"`
 }
 
-type PermissionJson struct {
+type permissionJson struct {
 	MenuId int64  `json:"menuId"`
 	Code   string `json:"code"`
 	NameId string `json:"nameId"`
@@ -29,21 +29,21 @@ type PermissionJson struct {
 	PermissionView int64 `json:"permissionView"`
 }
 
-func loadMenu() ([]MenuJson, error) {
-	var menus []MenuJson
+func loadMenu() ([]menuJson, error) {
+	var menus []menuJson
 	data, err := os.ReadFile("storage/seed/menu.json")
 	if err != nil {
-		log.Println("Gagal membaca file menu.json:", err)
+		log.Println("Failed read file menu.json", err)
 		return menus, err
 	}
 	if err := json.Unmarshal(data, &menus); err != nil {
-		log.Println("Gagal parse JSON:", err)
+		log.Println("Failed parse menu.json", err)
 		return menus, err
 	}
 	return menus, nil
 }
 
-func insertMenu(db *gorm.DB, menu MenuJson) error {
+func insertMenu(db *gorm.DB, menu menuJson) error {
 	menuEntity := entity.Menu{
 		ID:       menu.ID,
 		ParentId: menu.ParentId,

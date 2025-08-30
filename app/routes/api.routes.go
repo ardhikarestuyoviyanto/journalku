@@ -5,8 +5,10 @@ import (
 	"fullstack-journal/app/handler/v1/auth/signInHandler"
 	"fullstack-journal/app/handler/v1/auth/signUpHandler"
 	"fullstack-journal/app/handler/v1/company/companyHandler"
+	"fullstack-journal/app/handler/v1/metaData/dropwdownHandler"
 	"fullstack-journal/app/handler/v1/metaData/initHandler"
 	"fullstack-journal/app/handler/v1/metaData/locationHandler"
+	"fullstack-journal/app/handler/v1/setting/accountHandler"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -40,4 +42,10 @@ func ApiV1(e *echo.Echo, db *gorm.DB) {
 	routeAuth.POST("/choose-company", companyHandler.ChooseCompany(db))
 	// MODUL INIT API
 	routeAuth.GET("/init", initHandler.GetAll(db))
+	// MODUL SETTING
+	// MENU ACOOUNT
+	routeAuth.GET("/accounts", accountHandler.GetAll(db))
+	routeAuth.POST("/accounts", accountHandler.Store(db))
+	// DROPDOWN
+	routeAuth.GET("/dropdown/categoryAccounts", dropwdownHandler.GetCategoryAccounts(db))
 }

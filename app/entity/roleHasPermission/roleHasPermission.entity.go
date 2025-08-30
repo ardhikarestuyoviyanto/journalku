@@ -1,7 +1,8 @@
 package roleHasPermission
 
 import (
-	"fmt"
+	"errors"
+	"log"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -10,20 +11,16 @@ import (
 func GetPermissionCodeByRoleId(db *gorm.DB, roleId uuid.UUID)([]string, error){
 	code := make([]string, 0)
 	result := []map[string]interface{}{}
-	
-	query := `
-		SELECT 	
-			role_has_permission.*,
-			permission.code
-		FROM role_has_permission
-		LEFT JOIN permission ON permission.id = role_has_permission.permission_id
-		WHERE role_has_permission.role_id = ?
-		AND role_has_permission.deleted_at IS NULL
-	`
 
-	if err := db.Raw(query, roleId).Scan(&result).Error; err != nil{
-		fmt.Println("Query error:", err)
-		return code, err
+	query := db.Table("role_has_permission").
+		Select("role_has_permission.*,permission.code").
+		Joins("LEFT JOIN permission ON permission.id = role_has_permission.permission_id").
+		Where("role_has_permission.role_id = ?", roleId).
+		Where("role_has_permission.deleted_at IS NULL")
+
+	if err := query.Scan(&result).Error; err != nil{
+		log.Println("Query error:", err)
+		return code, errors.New(err.Error())
 	}
 
 	for _, res := range result{
